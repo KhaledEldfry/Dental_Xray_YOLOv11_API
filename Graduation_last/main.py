@@ -33,3 +33,7 @@ async def detect(file: UploadFile = File(...)):
     buf.seek(0)
 
     return StreamingResponse(buf, media_type="image/png")
+    import uvicorn
+
+    if __name__ == "__main__":
+        uvicorn.run("main:app", host="0.0.0.0", port=8000)
