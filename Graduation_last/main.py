@@ -8,7 +8,7 @@ import io
 app = FastAPI()
 
 # Load model
-model = YOLO("yolov11.pt")
+model = YOLO("best.pt")
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
