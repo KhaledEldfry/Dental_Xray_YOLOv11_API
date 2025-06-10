@@ -1,39 +1,24 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import StreamingResponse
 from ultralytics import YOLO
-from PIL import Image
-import numpy as np
 import cv2
+import numpy as np
 import io
 
 app = FastAPI()
 
-# Load the trained YOLO model
-model = YOLO("best.pt")  # Make sure best.pt is in the same directory
+# Load model
+model = YOLO("yolov11.pt")
 
-@app.post("/detect/")
-async def detect(file: UploadFile = File(...)):
-    # Read uploaded image
+@app.post("/predict")
+async def predict(file: UploadFile = File(...)):
     contents = await file.read()
-    image = Image.open(io.BytesIO(contents)).convert("RGB")
-    
-    # Run prediction
-    results = model.predict(image, conf=0.25)
+    nparr = np.frombuffer(contents, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    # Draw results (this returns a BGR numpy array)
-    result_img = results[0].plot()
+    results = model(img)
+    annotated_frame = results[0].plot()
 
-    # Convert BGR to RGB
-    result_img = cv2.cvtColor(result_img, cv2.COLOR_BGR2RGB)
-
-    # Convert to BytesIO for HTTP response
-    pil_img = Image.fromarray(result_img)
-    buf = io.BytesIO()
-    pil_img.save(buf, format="PNG")
-    buf.seek(0)
-
-    return StreamingResponse(buf, media_type="image/png")
-    import uvicorn
-
-    if __name__ == "__main__":
-        uvicorn.run("main:app", host="0.0.0.0", port=8000)
+    # Convert to streamable image
+    _, im_png = cv2.imencode(".png", annotated_frame)
+    return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/png")
