@@ -1,10 +1,15 @@
 from fastapi import FastAPI, File, UploadFile
-from app.predict import run_prediction
 from fastapi.responses import JSONResponse
+from app.detect import run_detection
+import uvicorn
 
 app = FastAPI()
 
-@app.post("/predict")
-async def predict(file: UploadFile = File(...)):
-    result = await run_prediction(file)
+@app.post("/detect")
+async def detect(file: UploadFile = File(...)):
+    result = await run_detection(file)
     return JSONResponse(content=result)
+
+# optional for local testing
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
