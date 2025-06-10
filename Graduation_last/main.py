@@ -3,22 +3,25 @@ from fastapi.responses import StreamingResponse
 from ultralytics import YOLO
 import cv2
 import numpy as np
-import io
+from io import BytesIO
+from PIL import Image
 
 app = FastAPI()
 
-# Load model
-model = YOLO("best.pt")
+model = YOLO("best.pt") 
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     contents = await file.read()
-    nparr = np.frombuffer(contents, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    np_image = np.frombuffer(contents, np.uint8)
+    image = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
 
-    results = model(img)
-    annotated_frame = results[0].plot()
+    results = model(image)
+    result_img = results[0].plot()
 
-    # Convert to streamable image
-    _, im_png = cv2.imencode(".png", annotated_frame)
-    return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/png")
+    pil_img = Image.fromarray(cv2.cvtColor(result_img, cv2.COLOR_BGR2RGB))
+    buffer = BytesIO()
+    pil_img.save(buffer, format="JPEG")
+    buffer.seek(0)
+
+    return StreamingResponse(buffer, media_type="image/jpeg")
