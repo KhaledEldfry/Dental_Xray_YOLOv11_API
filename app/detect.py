@@ -3,7 +3,14 @@ import tempfile
 import shutil
 from app.utils import save_upload_file
 
-model = torch.load("app/models/best.pt", map_location="cpu", weights_only=False)
+
+from ultralytics.nn.tasks import DetectionModel
+torch.serialization.add_safe_globals({'ultralytics.nn.tasks.DetectionModel': DetectionModel})
+
+
+from ultralytics import YOLO
+model = YOLO("app/models/best.pt") 
+
 model.eval()
 
 async def run_detection(file):
@@ -12,4 +19,4 @@ async def run_detection(file):
         img = temp.name
 
     results = model(img)
-    return results.pandas().xyxy[0].to_dict(orient="records")
+    return results[0].boxes.pandas().to_dict(orient="records")
