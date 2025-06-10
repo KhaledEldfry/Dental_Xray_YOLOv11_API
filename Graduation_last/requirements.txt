@@ -1,7 +1,5 @@
 fastapi
 uvicorn
 ultralytics
-pillow
-numpy
 opencv-python
 python-multipart
