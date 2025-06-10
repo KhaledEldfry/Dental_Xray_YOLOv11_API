@@ -3,7 +3,7 @@ import tempfile
 import shutil
 from app.utils import save_upload_file
 
-model = torch.load("models/best.pt", map_location="cpu")
+model = torch.load("app/models/best.pt", map_location="cpu")
 model.eval()
 
 async def run_detection(file):
