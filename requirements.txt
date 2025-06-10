@@ -3,3 +3,4 @@ uvicorn
 torch
 pandas
 opencv-python
+ultralytics
