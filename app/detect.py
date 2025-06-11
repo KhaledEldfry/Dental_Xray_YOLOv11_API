@@ -4,6 +4,9 @@ import shutil
 from app.utils import save_upload_file
 from ultralytics.nn.tasks import DetectionModel
 torch.serialization.add_safe_globals({'ultralytics.nn.tasks.DetectionModel': DetectionModel})
+import os
+print("Current directory:", os.getcwd())
+print("Model exists:", os.path.exists("app/models/best.pt"))
 
 from ultralytics import YOLO
 model = YOLO("app/models/best.pt")
