@@ -15,6 +15,13 @@ async def detect(file: UploadFile = File(...)):
     image_path = await run_detection(file)
     return FileResponse(image_path, media_type="image/jpeg", filename="result.jpg")
 
+@app.get("/health")
+async def health():
+    return {
+        "status": "healthy",
+        "model_loaded": os.path.exists("app/models/best.pt")
+    }
+
 # optional for local testing
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
