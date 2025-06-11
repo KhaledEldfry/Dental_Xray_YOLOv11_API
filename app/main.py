@@ -5,6 +5,10 @@ import uvicorn
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"message": "X-Ray YOLOv8 API is live 🚀"}
+
 @app.post("/detect")
 async def detect(file: UploadFile = File(...)):
     result = await run_detection(file)
