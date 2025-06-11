@@ -11,8 +11,8 @@ async def root():
 
 @app.post("/detect")
 async def detect(file: UploadFile = File(...)):
-    result = await run_detection(file)
-    return JSONResponse(content=result)
+    image_path = await run_detection(file)
+    return FileResponse(image_path, media_type="image/jpeg", filename="result.jpg")
 
 # optional for local testing
 if __name__ == "__main__":
