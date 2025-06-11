@@ -4,3 +4,4 @@ torch
 pandas
 opencv-python
 ultralytics
+python-multipart
