@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from app.detect import run_detection
+from fastapi.responses import FileResponse
 import uvicorn
 
 app = FastAPI()
