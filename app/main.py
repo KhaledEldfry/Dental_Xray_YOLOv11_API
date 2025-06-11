@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from app.detect import run_detection
 from fastapi.responses import FileResponse
 import uvicorn
+import os
 
 app = FastAPI()
 
@@ -16,12 +17,11 @@ async def detect(file: UploadFile = File(...)):
     return FileResponse(image_path, media_type="image/jpeg", filename="result.jpg")
 
 @app.get("/health")
-async def health():
+async def health_check():
     return {
         "status": "healthy",
-        "model_loaded": os.path.exists("app/models/best.pt")
+        "port": os.getenv("PORT", "10000")
     }
-
 # optional for local testing
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
