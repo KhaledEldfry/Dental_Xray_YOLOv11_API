@@ -11,8 +11,8 @@ app = FastAPI()
 async def root():
     return {"message": "X-Ray YOLOv11 API is live 🚀"}
 
-@app.post("/detect")
-async def detect(file: UploadFile = File(...)):
+@app.post("/segment")
+async def segment(file: UploadFile = File(...)):
     image_path = await run_detection(file)
     return FileResponse(image_path, media_type="image/jpeg", filename="result.jpg")
 
@@ -22,6 +22,7 @@ async def health_check():
         "status": "healthy",
         "port": os.getenv("PORT", "10000")
     }
+
 # optional for local testing
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
